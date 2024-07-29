@@ -13,7 +13,7 @@ var appServicePlanName = '${webAppName}-asp'
 var appInsightsName = '${webAppName}-app-insights'
 
 //AZURE APP INSIGHTS
-module webAppInsights './modules/appInsights.bicep' = {
+module webAppInsights '../modules/appInsights.bicep' = {
   name: appInsightsName
   params: {
     appInsightsName: appInsightsName
@@ -23,31 +23,8 @@ module webAppInsights './modules/appInsights.bicep' = {
   }
 }
 
-//WINDOWS APP SERVICE PLAN
-// module webAppWindowsAppServicePlan './modules/windowsAppServicePlan.bicep' = {
-//   name: appServicePlanName
-//   params: {
-//     tags : tags
-//     appServicePlanName: appServicePlanName
-//     appServicePlanSkuName : appServicePlanSkuName
-//   }
-// }
-
-//WINDOWS WEBAPP
-// module windowsWebapp './modules/windowsAppService.bicep' = {
-//   name: webAppName
-//   params: {
-//     webAppName : webAppName
-//     location: location
-//     tags : tags
-//     serverFarmId : webAppWindowsAppServicePlan.outputs.serverFarmId
-//     appInsightsInstrumentationKey : webAppInsights.outputs.appInsightsInstrumentationKey
-//     appInsightsprimaryConnectionString : webAppInsights.outputs.appInsightsPrimaryConnectionString
-//   }
-// }
-
 //LINUX APP SERVICE PLAN
-module linuxAppServicePlan './modules/linuxAppServicePlan.bicep' = {
+module linuxAppServicePlan '../modules/linuxAppServicePlan.bicep' = {
   name: appServicePlanName
   params: {
     tags: tags
@@ -57,7 +34,7 @@ module linuxAppServicePlan './modules/linuxAppServicePlan.bicep' = {
 }
 
 //LINUX WEBAPP
-module linuxWebApp './modules/linuxAppService.bicep' = {
+module linuxWebApp '../modules/linuxAppService.bicep' = {
   name: webAppName
   params: {
     webAppName: webAppName
@@ -69,6 +46,4 @@ module linuxWebApp './modules/linuxAppService.bicep' = {
     linuxFxVersion: linuxFxVersion
   }
 }
-
-// output windowsWebAppUrl string = windowsWebapp.outputs.webappurl
 output linuxWebAppUrl string = linuxWebApp.outputs.webappurl
