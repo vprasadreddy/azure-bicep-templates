@@ -1,0 +1,7 @@
+az deployment sub create --location eastus --template-file resourcegroup.bicep --parameters @resourcegroup.parameters.json
+
+az webapp list-runtimes --os-type linux
+
+az webapp list-runtimes --os-type windows
+ 
+az deployment group create --resource-group "dev-rg" --name devrollout01 --template-file main.bicep --parameters @main.parameters.json

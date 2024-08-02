@@ -13,7 +13,7 @@ var appServicePlanName = '${webAppName}-asp'
 var appInsightsName = '${webAppName}-app-insights'
 
 //AZURE APP INSIGHTS
-module webAppInsights '../modules/appInsights.bicep' = {
+module appInsights '../modules/appInsights.bicep' = {
   name: appInsightsName
   params: {
     appInsightsName: appInsightsName
@@ -41,9 +41,10 @@ module linuxWebApp '../modules/linuxAppService.bicep' = {
     location: location
     tags: tags
     serverFarmId: linuxAppServicePlan.outputs.serverFarmId
-    appInsightsInstrumentationKey: webAppInsights.outputs.appInsightsInstrumentationKey
-    appInsightsprimaryConnectionString: webAppInsights.outputs.appInsightsPrimaryConnectionString
+    appInsightsInstrumentationKey: appInsights.outputs.appInsightsInstrumentationKey
+    appInsightsprimaryConnectionString: appInsights.outputs.appInsightsPrimaryConnectionString
     linuxFxVersion: linuxFxVersion
   }
 }
+
 output linuxWebAppUrl string = linuxWebApp.outputs.webappurl
