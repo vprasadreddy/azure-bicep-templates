@@ -38,13 +38,13 @@ parameters:
   #   type: string
   #   default: "dev"
 
-variables:
-  - name: bicepTemplateFilePath
-    ${{ if eq(parameters.resource_to_deploy, 'Resource Group') }}:
-    value: "resource_group/resourcegroup.bicep"
-  - name: bicepParametersFilePath
-    ${{ if eq(parameters.resource_to_deploy, 'Resource Group') }}:
-    value: "$(System.DefaultWorkingDirectory)/resource_group/resourcegroup.parameters.json"
+# variables:
+#   - name: bicepTemplateFilePath
+#     ${{ if eq(parameters.resource_to_deploy, 'Resource Group') }}:
+#     value: "resource_group/resourcegroup.bicep"
+#   - name: bicepParametersFilePath
+#     ${{ if eq(parameters.resource_to_deploy, 'Resource Group') }}:
+#     value: "$(System.DefaultWorkingDirectory)/resource_group/resourcegroup.parameters.json"
 
 stages:
   - stage: deploy
