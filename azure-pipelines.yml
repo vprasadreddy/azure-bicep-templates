@@ -1,0 +1,83 @@
+trigger: none
+
+parameters:
+  - name: azureServiceConnection
+    type: string
+    default: "azure-pipeline-service-connection"
+  - name: resource_to_deploy
+    displayName: Select Resource to Deploy
+    type: string
+    values:
+      - Resource Group
+      - Linux Web App
+      - Windows Web App
+  # - name: templateFile
+  #   type: string
+  #   default: ""
+  # - name: parametersFile
+  #   type: string
+  #   default: ""
+  - name: resourceGroupName
+    displayName: Enter Resource Group Name.
+    type: string
+  - name: resourceGroupLocation
+    displayName: Enter Location for Resource Group.
+    type: string
+    default: "eastus"
+
+  - name: simulate
+    type: boolean
+    default: true
+  - name: environment
+    type: string
+    values:
+      - dev
+      - test
+      - prod
+  # - name: envFolder
+  #   type: string
+  #   default: "dev"
+
+variables:
+  - name: bicepTemplateFilePath
+    ${{ if eq(parameters.resource_to_deploy, 'Resource Group') }}:
+    value: "$(System.DefaultWorkingDirectory)/resource_group/resourcegroup.bicep"
+  - name: bicepParametersFilePath
+    ${{ if eq(parameters.resource_to_deploy, 'Resource Group') }}:
+    value: "$(System.DefaultWorkingDirectory)/resource_group/resourcegroup.parameters.json"
+
+stages:
+  - stage: deploy
+    jobs:
+      - deployment: "deploy_resources"
+        displayName: "${{parameters.environment}}-deployment"
+        environment: ${{parameters.environment}}
+        # variables:
+        #   azureServiceConnection: ${{parameters.azureServiceConnection}}
+        #   templateFilePath: "{{variables.bicepTemplateFilePath}}"
+        #   parametersFilePath: "{{variables.bicepParametersFilePath}}"
+        #   deploymentName: "${{parameters.environment}}_$(Build.BuildId)"
+        #   envCode: ${{parameters.envCode}}
+        #   ${{ if eq(parameters.simulate,true) }}:
+        #     runSimulation: "--what-if"
+
+        pool:
+          vmImage: "windows-latest"
+
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                  name: "Checkout for ${{parameters.environment}} environment"
+
+                - task: AzureCLI@2
+                  condition: eq('${{ parameters.resource_to_deploy }}', 'Resource Group')
+                  inputs:
+                    azureSubscription: ${{variables.azureServiceConnection}}
+                    scriptType: "bash"
+                    scriptLocation: "inlineScript"
+                    inlineScript: |
+                      az deployment sub create --location ${{parameters.resourceGroupLocation}} \
+                      --template-file ${{variables.bicepTemplateFilePath}} \
+                      --parameters @${{variables.bicepParametersFilePath}}
