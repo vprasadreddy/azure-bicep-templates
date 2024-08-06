@@ -25,9 +25,9 @@ parameters:
     type: string
     default: "eastus"
 
-  - name: simulate
-    type: boolean
-    default: true
+  # - name: simulate
+  #   type: boolean
+  #   default: true
   - name: environment
     type: string
     values:
@@ -73,7 +73,7 @@ stages:
                 - task: AzureCLI@2
                   condition: eq('${{ parameters.resource_to_deploy }}', 'Resource Group')
                   inputs:
-                    azureSubscription: ${{variables.azureServiceConnection}}
+                    azureSubscription: ${{parameters.azureServiceConnection}}
                     scriptType: "bash"
                     scriptLocation: "inlineScript"
                     inlineScript: |
@@ -81,5 +81,5 @@ stages:
                       # --template-file ${{variables.bicepTemplateFilePath}} \
                       # --parameters @${{variables.bicepParametersFilePath}}
                       az deployment sub create --location ${{parameters.resourceGroupLocation}} \
-                      --template-file "$(System.DefaultWorkingDirectory)/resource_group/resourcegroup.bicep" \
-                      --parameters @"$(System.DefaultWorkingDirectory)/resource_group/resourcegroup.parameters.json"
+                      --template-file "$(System.DefaultWorkingDirectory)\resource_group\resourcegroup.bicep" \
+                      --parameters @"$(System.DefaultWorkingDirectory)\resource_group\resourcegroup.parameters.json"
