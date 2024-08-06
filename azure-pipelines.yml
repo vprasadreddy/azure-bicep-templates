@@ -41,7 +41,7 @@ parameters:
 variables:
   - name: bicepTemplateFilePath
     ${{ if eq(parameters.resource_to_deploy, 'Resource Group') }}:
-    value: "$(System.DefaultWorkingDirectory)/resource_group/resourcegroup.bicep"
+    value: "resource_group/resourcegroup.bicep"
   - name: bicepParametersFilePath
     ${{ if eq(parameters.resource_to_deploy, 'Resource Group') }}:
     value: "$(System.DefaultWorkingDirectory)/resource_group/resourcegroup.parameters.json"
@@ -78,6 +78,9 @@ stages:
                     scriptType: "bash"
                     scriptLocation: "inlineScript"
                     inlineScript: |
+                      # az deployment sub create --location ${{parameters.resourceGroupLocation}} \
+                      # --template-file ${{variables.bicepTemplateFilePath}} \
+                      # --parameters @${{variables.bicepParametersFilePath}}
                       az deployment sub create --location ${{parameters.resourceGroupLocation}} \
-                      --template-file ${{variables.bicepTemplateFilePath}} \
-                      --parameters @${{variables.bicepParametersFilePath}}
+                      --template-file "$(System.DefaultWorkingDirectory)/resource_group/resourcegroup.bicep" \
+                      --parameters @"$(System.DefaultWorkingDirectory)/resource_group/resourcegroup.parameters.json"
