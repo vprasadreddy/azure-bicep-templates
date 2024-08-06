@@ -69,7 +69,6 @@ stages:
             deploy:
               steps:
                 - checkout: self
-                  name: "Checkout for ${{parameters.environment}} environment"
 
                 - task: AzureCLI@2
                   condition: eq('${{ parameters.resource_to_deploy }}', 'Resource Group')
