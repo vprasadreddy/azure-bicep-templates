@@ -81,5 +81,5 @@ stages:
                       # --template-file ${{variables.bicepTemplateFilePath}} \
                       # --parameters @${{variables.bicepParametersFilePath}}
                       az deployment sub create --location ${{parameters.resourceGroupLocation}} \
-                      --template-file "$(System.DefaultWorkingDirectory)\resource_group\resourcegroup.bicep" \
-                      --parameters @"$(System.DefaultWorkingDirectory)\resource_group\resourcegroup.parameters.json"
+                      --template-file "$(System.DefaultWorkingDirectory)/resource_group/resourcegroup.bicep" \
+                      --parameters @"$(System.DefaultWorkingDirectory)/resource_group/resourcegroup.parameters.json"
