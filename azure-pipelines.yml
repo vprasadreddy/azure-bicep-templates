@@ -25,6 +25,7 @@ parameters:
       - Resource Group
       - Linux Web App
       - Windows Web App
+    default: "Resource Group"
   # - name: templateFile
   #   type: string
   #   default: ""
@@ -49,6 +50,7 @@ parameters:
       - dev
       - test
       - prod
+    default: dev
   # - name: envFolder
   #   type: string
   #   default: "dev"
