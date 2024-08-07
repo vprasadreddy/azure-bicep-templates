@@ -1,4 +1,18 @@
-trigger: none
+name: "$(BuildDefinitionName)_$(date:yyyyMMdd)_$(Build.BuildId)"
+# trigger: none
+trigger:
+  batch: true
+  branches:
+    include:
+      # - dev
+      # - feature/*
+      - main
+  paths:
+    exclude:
+      - README.md
+
+pr:
+  - main
 
 parameters:
   - name: azureServiceConnection
@@ -46,6 +60,9 @@ parameters:
 #     ${{ if eq(parameters.resource_to_deploy, 'Resource Group') }}:
 #     value: "$(System.DefaultWorkingDirectory)/resource_group/resourcegroup.parameters.json"
 
+pool:
+  vmImage: "ubuntu-latest"
+
 stages:
   - stage: deploy
     jobs:
@@ -60,9 +77,6 @@ stages:
         #   envCode: ${{parameters.envCode}}
         #   ${{ if eq(parameters.simulate,true) }}:
         #     runSimulation: "--what-if"
-
-        pool:
-          vmImage: "windows-latest"
 
         strategy:
           runOnce:
