@@ -6,7 +6,7 @@ trigger:
     include:
       # - dev
       # - feature/*
-      - main
+      # - main
   paths:
     exclude:
       - README.md
@@ -42,7 +42,7 @@ parameters:
     default: "eastus"
   - name: simulate
     type: boolean
-    default: flase
+    default: false
   - name: environment
     type: string
     values:
