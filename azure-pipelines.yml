@@ -40,10 +40,9 @@ parameters:
     displayName: Enter Location for Resource Group.
     type: string
     default: "eastus"
-
-  # - name: simulate
-  #   type: boolean
-  #   default: true
+  - name: simulate
+    type: boolean
+    default: flase
   - name: environment
     type: string
     values:
@@ -51,9 +50,6 @@ parameters:
       - test
       - prod
     default: dev
-  # - name: envFolder
-  #   type: string
-  #   default: "dev"
 
 variables:
   - name: bicepTemplateFilePath
@@ -72,14 +68,9 @@ stages:
       - deployment: "deploy_resources"
         displayName: "${{parameters.environment}}-deployment"
         environment: ${{parameters.environment}}
-        # variables:
-        #   azureServiceConnection: ${{parameters.azureServiceConnection}}
-        #   templateFilePath: "{{variables.bicepTemplateFilePath}}"
-        #   parametersFilePath: "{{variables.bicepParametersFilePath}}"
-        #   deploymentName: "${{parameters.environment}}_$(Build.BuildId)"
-        #   envCode: ${{parameters.envCode}}
-        #   ${{ if eq(parameters.simulate,true) }}:
-        #     runSimulation: "--what-if"
+        variables:
+          ${{ if eq(parameters.simulate,true) }}:
+            runSimulation: "--what-if"
 
         strategy:
           runOnce:
@@ -96,7 +87,7 @@ stages:
                     inlineScript: |
                       az deployment sub create --location ${{parameters.resourceGroupLocation}} \
                       --template-file ${{variables.bicepTemplateFilePath}} \
-                      --parameters @${{variables.bicepParametersFilePath}}
+                      --parameters @${{variables.bicepParametersFilePath}} ${{variables.runSimulation}}
                       # az deployment sub create --location ${{parameters.resourceGroupLocation}} \
                       # --template-file "$(System.DefaultWorkingDirectory)/resource_group/resourcegroup.bicep" \
-                      # --parameters @"$(System.DefaultWorkingDirectory)/resource_group/resourcegroup.parameters.json"
+                      # --parameters @"$(System.DefaultWorkingDirectory)/resource_group/resourcegroup.parameters.json" ${{variables.runSimulation}}
