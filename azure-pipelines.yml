@@ -2,14 +2,14 @@ name: "$(BuildDefinitionName)_$(date:yyyyMMdd)_$(Build.BuildId)"
 # trigger: none
 trigger:
   batch: true
-  branches:
-    include:
-      # - dev
-      # - feature/*
-      # - main
-  paths:
-    exclude:
-      - README.md
+  # branches:
+  #   include:
+  #     - dev
+  #     - feature/*
+  #     - main
+  # paths:
+  #   exclude:
+  #     - README.md
 
 pr:
   - main
