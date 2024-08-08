@@ -87,9 +87,6 @@ stages:
                     scriptType: "bash"
                     scriptLocation: "inlineScript"
                     inlineScript: |
-                      # az deployment sub create --location ${{parameters.resourceGroupLocation}} \
-                      # --template-file "$(System.DefaultWorkingDirectory)/${{parameters.bicepTemplateFilePath}}" \
-                      # --parameters @"$(System.DefaultWorkingDirectory)/${{parameters.bicepParametersFilePath}}" ${{variables.runSimulation}}
                       az deployment sub create --location ${{parameters.resourceGroupLocation}} \
                       --template-file ${{variables.bicepTemplateFilePath}} \
                       --parameters @${{variables.bicepParametersFilePath}} ${{variables.runSimulation}}
