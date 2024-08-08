@@ -80,6 +80,7 @@ stages:
               steps:
                 - checkout: self
 
+                # Using parameters in template-file and parameters
                 - task: AzureCLI@2
                   condition: eq('${{ parameters.resource_to_deploy }}', 'Resource Group')
                   inputs:
@@ -90,6 +91,27 @@ stages:
                       az deployment sub create --location ${{parameters.resourceGroupLocation}} \
                       --template-file "$(System.DefaultWorkingDirectory)/${{parameters.bicepTemplateFilePath}}" \
                       --parameters @"$(System.DefaultWorkingDirectory)/${{parameters.bicepParametersFilePath}}" ${{variables.runSimulation}}
-                      # az deployment sub create --location ${{parameters.resourceGroupLocation}} \
-                      # --template-file ${{variables.bicepTemplateFilePath}} \
-                      # --parameters @${{variables.bicepParametersFilePath}} ${{variables.runSimulation}}
+
+                # Using variables in template-file and parameters
+                # - task: AzureCLI@2
+                #   condition: eq('${{ parameters.resource_to_deploy }}', 'Resource Group')
+                #   inputs:
+                #     azureSubscription: ${{parameters.azureServiceConnection}}
+                #     scriptType: "bash"
+                #     scriptLocation: "inlineScript"
+                #     inlineScript: |
+                #       az deployment sub create --location ${{parameters.resourceGroupLocation}} \
+                #       --template-file ${{variables.bicepTemplateFilePath}} \
+                #       --parameters @${{variables.bicepParametersFilePath}} ${{variables.runSimulation}}
+
+                # Windows & Linux Web App provision
+                - task: AzureCLI@2
+                  condition: or(eq('${{ parameters.resource_to_deploy }}', 'Linux Web App'), eq('${{ parameters.resource_to_deploy }}', 'Windows Web App'))
+                  inputs:
+                    azureSubscription: ${{parameters.azureServiceConnection}}
+                    scriptType: "bash"
+                    scriptLocation: "inlineScript"
+                    inlineScript: |
+                      az deployment group create --resource-group ${{parameters.resourceGroupName}} --name "${{parameters.environment}}-deployment-$(Build.BuildId)" \
+                      --template-file "$(System.DefaultWorkingDirectory)/${{parameters.bicepTemplateFilePath}}" \
+                      --parameters @"$(System.DefaultWorkingDirectory)/${{parameters.bicepParametersFilePath}}" ${{variables.runSimulation}}
