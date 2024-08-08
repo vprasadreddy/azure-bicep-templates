@@ -1,15 +1,15 @@
 name: "$(BuildDefinitionName)_$(date:yyyyMMdd)_$(Build.BuildId)"
-# trigger: none
-trigger:
-  batch: true
-  # branches:
-  #   include:
-  #     - dev
-  #     - feature/*
-  #     - main
-  # paths:
-  #   exclude:
-  #     - README.md
+trigger: none
+# trigger:
+# batch: true
+# branches:
+#   include:
+#     - dev
+#     - feature/*
+#     - main
+# paths:
+#   exclude:
+#     - README.md
 
 pr:
   - main
@@ -56,10 +56,10 @@ parameters:
 variables:
   - name: bicepTemplateFilePath
     ${{ if eq(parameters.resource_to_deploy, 'Resource Group') }}:
-      value: "resource_group/resourcegroup.bicep"
+      value: "$(System.DefaultWorkingDirectory)/resource_group/resourcegroup.bicep"
   - name: bicepParametersFilePath
     ${{ if eq(parameters.resource_to_deploy, 'Resource Group') }}:
-      value: "resource_group/resourcegroup.parameters.json"
+      value: "$(System.DefaultWorkingDirectory)/resource_group/resourcegroup.parameters.json"
 
 pool:
   vmImage: "ubuntu-latest"
