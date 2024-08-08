@@ -26,14 +26,14 @@ parameters:
       - Linux Web App
       - Windows Web App
     default: "Resource Group"
-  - name: bicepTemplateFilePath
-    type: string
-    displayName: Provide relative path to the template file. For example, resource_group/resourcegroup.bicep
-    default: ""
-  - name: bicepParametersFilePath
-    type: string
-    displayName: Provide relative path to the template parameters json file. For example, resource_group/resourcegroup.parameters.json
-    default: ""
+  # - name: bicepTemplateFilePath
+  #   type: string
+  #   displayName: Provide relative path to the template file. For example, resource_group/resourcegroup.bicep
+  #   default: ""
+  # - name: bicepParametersFilePath
+  #   type: string
+  #   displayName: Provide relative path to the template parameters json file. For example, resource_group/resourcegroup.parameters.json
+  #   default: ""
   - name: resourceGroupName
     displayName: Enter Resource Group Name.
     type: string
@@ -53,13 +53,13 @@ parameters:
       - prod
     default: dev
 
-# variables:
-# - name: bicepTemplateFilePath
-#   ${{ if eq(parameters.resource_to_deploy, 'Resource Group') }}:
-#     value: "resource_group/resourcegroup.bicep"
-# - name: bicepParametersFilePath
-#   ${{ if eq(parameters.resource_to_deploy, 'Resource Group') }}:
-#     value: "$(System.DefaultWorkingDirectory)/resource_group/resourcegroup.parameters.json"
+variables:
+  - name: bicepTemplateFilePath
+    ${{ if eq(parameters.resource_to_deploy, 'Resource Group') }}:
+      value: "resource_group/resourcegroup.bicep"
+  - name: bicepParametersFilePath
+    ${{ if eq(parameters.resource_to_deploy, 'Resource Group') }}:
+      value: "resource_group/resourcegroup.parameters.json"
 
 pool:
   vmImage: "ubuntu-latest"
@@ -88,8 +88,8 @@ stages:
                     scriptLocation: "inlineScript"
                     inlineScript: |
                       az deployment sub create --location ${{parameters.resourceGroupLocation}} \
-                      --template-file ${{parameters.bicepTemplateFilePath}} \
-                      --parameters @${{parameters.bicepParametersFilePath}} ${{variables.runSimulation}}
+                      --template-file ${{variables.bicepTemplateFilePath}} \
+                      --parameters @${{variables.bicepParametersFilePath}} ${{variables.runSimulation}}
                       # az deployment sub create --location ${{parameters.resourceGroupLocation}} \
                       # --template-file "$(System.DefaultWorkingDirectory)/resource_group/resourcegroup.bicep" \
                       # --parameters @"$(System.DefaultWorkingDirectory)/resource_group/resourcegroup.parameters.json" ${{variables.runSimulation}}
