@@ -26,14 +26,14 @@ parameters:
       - Linux Web App
       - Windows Web App
     default: "Resource Group"
-  # - name: bicepTemplateFilePath
-  #   type: string
-  #   displayName: Provide relative path to the template file. For example, resource_group/resourcegroup.bicep
-  #   default: "resource_group/resourcegroup.bicep"
-  # - name: bicepParametersFilePath
-  #   type: string
-  #   displayName: Provide relative path to the template parameters json file. For example, resource_group/resourcegroup.parameters.json
-  #   default: "resource_group/resourcegroup.parameters.json"
+  - name: bicepTemplateFilePath
+    type: string
+    displayName: Provide relative path to the template file. For example, resource_group/resourcegroup.bicep
+    default: "resource_group/resourcegroup.bicep"
+  - name: bicepParametersFilePath
+    type: string
+    displayName: Provide relative path to the template parameters json file. For example, resource_group/resourcegroup.parameters.json
+    default: "resource_group/resourcegroup.parameters.json"
   - name: resourceGroupName
     displayName: Enter Resource Group Name.
     type: string
