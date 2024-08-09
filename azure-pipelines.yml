@@ -1,12 +1,13 @@
 name: "$(BuildDefinitionName)_$(date:yyyyMMdd)_$(Build.BuildId)"
-trigger: none
+
+# trigger: none
 # trigger:
-# batch: true
-# branches:
-#   include:
-#     - dev
-#     - feature/*
-#     - main
+#   batch: true
+#   branches:
+#     include:
+#       - dev
+#       - feature/*
+#       - main
 # paths:
 #   exclude:
 #     - README.md
@@ -105,6 +106,7 @@ stages:
                 #       --parameters @${{variables.bicepParametersFilePath}} ${{variables.runSimulation}}
 
                 # Windows & Linux Web App provision
+                # Make sure Resource Group is already created before provision Windows & Linux Web Apps
                 - task: AzureCLI@2
                   condition: or(eq('${{ parameters.resource_to_deploy }}', 'Linux Web App'), eq('${{ parameters.resource_to_deploy }}', 'Windows Web App'))
                   inputs:
