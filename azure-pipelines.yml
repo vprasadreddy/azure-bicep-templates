@@ -81,8 +81,9 @@ stages:
               steps:
                 - checkout: self
 
-                # Using parameters in template-file and parameters
+                # Deploy using template-file, JSON parameters file from parameters
                 - task: AzureCLI@2
+                  displayName: Deploy using template-file, JSON parameters file from parameters
                   condition: eq('${{ parameters.resource_to_deploy }}', 'Resource Group')
                   inputs:
                     azureSubscription: ${{parameters.azureServiceConnection}}
@@ -93,8 +94,9 @@ stages:
                       --template-file "$(System.DefaultWorkingDirectory)/${{parameters.bicepTemplateFilePath}}" \
                       --parameters @"$(System.DefaultWorkingDirectory)/${{parameters.bicepParametersFilePath}}" ${{variables.runSimulation}}
 
-                # Using variables in template-file and parameters
+                # Deploy using template-file, JSON parameters file from variables
                 # - task: AzureCLI@2
+                #   displayName: Deploy using template-file, JSON parameters file from variables
                 #   condition: eq('${{ parameters.resource_to_deploy }}', 'Resource Group')
                 #   inputs:
                 #     azureSubscription: ${{parameters.azureServiceConnection}}
@@ -105,9 +107,10 @@ stages:
                 #       --template-file ${{variables.bicepTemplateFilePath}} \
                 #       --parameters @${{variables.bicepParametersFilePath}} ${{variables.runSimulation}}
 
-                # Windows & Linux Web App provision
+                # Provision Windows or Linux Web App
                 # Make sure Resource Group is already created before provision Windows & Linux Web Apps
                 - task: AzureCLI@2
+                  displayName: Provision Windows or Linux Web App
                   condition: or(eq('${{ parameters.resource_to_deploy }}', 'Linux Web App'), eq('${{ parameters.resource_to_deploy }}', 'Windows Web App'))
                   inputs:
                     azureSubscription: ${{parameters.azureServiceConnection}}
