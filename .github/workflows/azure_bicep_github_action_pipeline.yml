@@ -116,5 +116,5 @@ jobs:
         run: |
           az deployment group create --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
           --name "${{env.ENVIRONMENT}}-deployment-${{github.run_id}}-${{github.run_attempt}}" \
-          --template-file "${{env.BICEP_TEMPLATE_FILE_PATH}}" \
-          --parameters @"${{env.BICEP_TEMPLATE_FILE_PARAMETERS_PATH}}"
+          --template-file ${{env.BICEP_TEMPLATE_FILE_PATH}} \
+          --parameters @main.parameters.json
