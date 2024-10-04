@@ -3,10 +3,14 @@
 name: azure_bicep_github_action_pipeline
 
 env:
-  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+  AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  AZURE_RESOURCE_GROUP: "bicep-deployment-dev-rg"
+  BICEP_TEMPLATE_FILE_PATH: "./main.bicep"
+  BICEP_TEMPLATE_FILE_PARAMETERS_PATH: "./main.parameters.json"
+  ENVIRONMENT: "dev"
 
 # Controls when the workflow will run
 on:
@@ -27,13 +31,86 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
+      # Authenticate to Az CLI using OIDC
+      # - name: "Az CLI login"
+      #   uses: azure/login@v1
+      #   with:
+      #     client-id: ${{ secrets.AZURE_CLIENT_ID }}
+      #     tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+      #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
       - name: "Login via Azure CLI"
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy Bicep Code
+      - name: Bicep Lint
+        uses: Azure/cli@v1
+        with:
+          inlineScript: az bicep build --file ${{env.BICEP_TEMPLATE_FILE_PATH}}
+
+      # Validate whether a template is valid at Resource Group scope level
+      - name: Bicep Validate
+        uses: Azure/cli@v1
+        with:
+          inlineScript: |
+            az deployment group validate --name validate-group-deployment-${{ github.run_id }}-${{github.run_attempt}} \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --template-file ${{env.BICEP_TEMPLATE_FILE_PATH}} \
+            --parameters @${{env.BICEP_TEMPLATE_FILE_PARAMETERS_PATH}}
+
+            # az deployment sub validate \
+            #   --name validate-subscription-deployment-${{ github.run_id }}-${{github.run_attempt}} \
+            #   --template-file main.bicep \
+            #   --location $LOCATION
+
+      # Preview changes
+      - name: "What-If"
+        uses: Azure/cli@v1
+        with:
+          inlineScript: |
+            az deployment group what-if \
+            --name whatif-group-deployment-${{ github.run_id }}-${{github.run_attempt}} \
+            --template-file ${{env.BICEP_TEMPLATE_FILE_PATH}} \
+            --parameters @${{env.BICEP_TEMPLATE_FILE_PARAMETERS_PATH}} > whatif
+
+      # Create string output of Whatif
+      - name: Create String Output
+        id: whatif-string
         run: |
-          az deployment group create --resource-group "bicep-rg" --name "dev-deployment-${{github.run_id}}-${{github.run_attempt}}" \
-          --template-file "./main.bicep" \
-          --parameters @"./main.parameters.json"
+          WHATIF=$(cat whatif)
+
+          delimiter="$(openssl rand -hex 8)"
+          echo "summary<<${delimiter}" >> $GITHUB_OUTPUT
+          echo "## Whatif Output" >> $GITHUB_OUTPUT
+          echo "<details><summary>Click to expand</summary>" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo '```' >> $GITHUB_OUTPUT
+          echo "$WHATIF" >> $GITHUB_OUTPUT
+          echo '```' >> $GITHUB_OUTPUT
+          echo "</details>" >> $GITHUB_OUTPUT
+          echo "${delimiter}" >> $GITHUB_OUTPUT
+
+      # Publish Bicep Whatif Plan as task summary
+      - name: Publish Whatif to Task Summary
+        env:
+          SUMMARY: ${{ steps.whatif-string.outputs.summary }}
+        run: |
+          echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
+
+      # - name: Deploy Bicep Code using Git Action
+      #   uses: azure/arm-deploy@v1
+      #   with:
+      #     scope: "resourcegroup"
+      #     subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      #     resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP }}
+      #     template: ${{env.BICEP_TEMPLATE_FILE_PATH}}
+      #     parameters: ${{env.BICEP_TEMPLATE_FILE_PARAMETERS_PATH}}
+      #     failOnStdErr: false
+
+      - name: Deploy Bicep Code using AZ CLI command
+        run: |
+          az deployment group create --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --name "${{env.ENVIRONMENT}}-deployment-${{github.run_id}}-${{github.run_attempt}}" \
+          --template-file ${{env.BICEP_TEMPLATE_FILE_PATH}} \
+          --parameters @${{env.BICEP_TEMPLATE_FILE_PARAMETERS_PATH}}
