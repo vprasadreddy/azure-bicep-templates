@@ -115,6 +115,6 @@ jobs:
       - name: Deploy Bicep Code using AZ CLI command
         run: |
           az deployment group create --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-          --name "${{env.ENVIRONMENT}}-deployment-${{ github.run_id }}-${{github.run_attempt}}" \
-          --template-file main.bicep \
-          --parameters main.parameters.json
+          --name "dev-deployment-${{ github.run_id }}-${{github.run_attempt}}" \
+          --template-file "./main.bicep" \
+          --parameters @"./main.parameters.json"
