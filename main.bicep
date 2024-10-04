@@ -13,6 +13,7 @@ param keyVaultEnableRbacAuthorization bool
 //KEY VAULT
 module keyvault './modules/keyvault.bicep' = {
   name: keyVaultName
+  scope: resourceGroup()
   params: {
     name: keyVaultName
     location: location
