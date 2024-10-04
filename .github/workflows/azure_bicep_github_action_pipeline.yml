@@ -8,8 +8,8 @@ env:
   AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
   AZURE_RESOURCE_GROUP: "bicep-deployment-dev-rg"
-  BICEP_TEMPLATE_FILE_PATH: "./main.bicep"
-  BICEP_TEMPLATE_FILE_PARAMETERS_PATH: "./main.parameters.json"
+  BICEP_TEMPLATE_FILE_PATH: "main.bicep"
+  BICEP_TEMPLATE_FILE_PARAMETERS_PATH: "main.parameters.json"
   ENVIRONMENT: "dev"
 
 # Controls when the workflow will run
