@@ -74,6 +74,7 @@ jobs:
           inlineScript: |
             az deployment group what-if \
             --name whatif-group-deployment-${{ github.run_id }}-${{github.run_attempt}} \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
             --template-file ${{env.BICEP_TEMPLATE_FILE_PATH}} \
             --parameters @${{env.BICEP_TEMPLATE_FILE_PARAMETERS_PATH}} > whatif
 
