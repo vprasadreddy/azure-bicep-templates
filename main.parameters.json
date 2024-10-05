@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "keyVaultName": {
-      "value": "demo-kv-using-git2"
+      "value": "demo-kv-using-git3"
     },
     "tags": {
       "value": {
