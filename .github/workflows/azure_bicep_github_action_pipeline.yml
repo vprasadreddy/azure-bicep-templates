@@ -16,9 +16,9 @@ env:
 on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -104,21 +104,21 @@ jobs:
           echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
 
       # Deploy Bicep Code using Git Action
-      - name: Deploy Bicep Code using Git Action
-        uses: azure/arm-deploy@v1
-        with:
-          scope: "resourcegroup"
-          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP }}
-          deploymentName: "${{env.ENVIRONMENT}}-deployment-${{ github.run_id }}-${{github.run_attempt}}"
-          template: ${{env.BICEP_TEMPLATE_FILE_PATH}}
-          parameters: ${{env.BICEP_TEMPLATE_FILE_PARAMETERS_PATH}}
-          failOnStdErr: false
+      # - name: Deploy Bicep Code using Git Action
+      #   uses: azure/arm-deploy@v1
+      #   with:
+      #     scope: "resourcegroup"
+      #     subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      #     resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP }}
+      #     deploymentName: "${{env.ENVIRONMENT}}-deployment-${{ github.run_id }}-${{github.run_attempt}}"
+      #     template: ${{env.BICEP_TEMPLATE_FILE_PATH}}
+      #     parameters: ${{env.BICEP_TEMPLATE_FILE_PARAMETERS_PATH}}
+      #     failOnStdErr: false
 
       # Deploy Bicep Code using AZ CLI command
-      # - name: Deploy Bicep Code using AZ CLI command
-      #   run: |
-      #     az deployment group create --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-      #     --name "${{env.ENVIRONMENT}}-deployment-${{ github.run_id }}-${{github.run_attempt}}" \
-      #     --template-file ${{env.BICEP_TEMPLATE_FILE_PATH}} \
-      #     --parameters @${{env.BICEP_TEMPLATE_FILE_PARAMETERS_PATH}}
+      - name: Deploy Bicep Code using AZ CLI command
+        run: |
+          az deployment group create --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --name "${{env.ENVIRONMENT}}-deployment-${{ github.run_id }}-${{github.run_attempt}}" \
+          --template-file ${{env.BICEP_TEMPLATE_FILE_PATH}} \
+          --parameters @${{env.BICEP_TEMPLATE_FILE_PARAMETERS_PATH}}
