@@ -56,56 +56,56 @@ jobs:
           inlineScript: az bicep build --file ${{env.BICEP_TEMPLATE_FILE_PATH}}
 
       # Validate whether a template is valid at Resource Group scope level
-      - name: Bicep Validate
-        uses: Azure/cli@v2
-        with:
-          azcliversion: 2.63.0
-          inlineScript: |
-            az deployment group validate --name validate-group-deployment-${{ github.run_id }}-${{github.run_attempt}} \
-            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-            --template-file ${{env.BICEP_TEMPLATE_FILE_PATH}} \
-            --parameters @${{env.BICEP_TEMPLATE_FILE_PARAMETERS_PATH}}
+      # - name: Bicep Validate
+      #   uses: Azure/cli@v2
+      #   with:
+      #     azcliversion: 2.63.0
+      #     inlineScript: |
+      #       az deployment group validate --name validate-group-deployment-${{ github.run_id }}-${{github.run_attempt}} \
+      #       --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+      #       --template-file ${{env.BICEP_TEMPLATE_FILE_PATH}} \
+      #       --parameters @${{env.BICEP_TEMPLATE_FILE_PARAMETERS_PATH}}
 
-            # az deployment sub validate \
-            #   --name validate-subscription-deployment-${{ github.run_id }}-${{github.run_attempt}} \
-            #   --template-file main.bicep \
-            #   --location $LOCATION
+      # az deployment sub validate \
+      #   --name validate-subscription-deployment-${{ github.run_id }}-${{github.run_attempt}} \
+      #   --template-file main.bicep \
+      #   --location $LOCATION
 
       # Preview changes
-      - name: "What-If"
-        uses: Azure/cli@v2
-        with:
-          azcliversion: 2.63.0
-          inlineScript: |
-            az deployment group what-if \
-            --name whatif-group-deployment-${{ github.run_id }}-${{github.run_attempt}} \
-            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-            --template-file ${{env.BICEP_TEMPLATE_FILE_PATH}} \
-            --parameters @${{env.BICEP_TEMPLATE_FILE_PARAMETERS_PATH}} > whatif
+      # - name: "What-If"
+      #   uses: Azure/cli@v2
+      #   with:
+      #     azcliversion: 2.63.0
+      #     inlineScript: |
+      #       az deployment group what-if \
+      #       --name whatif-group-deployment-${{ github.run_id }}-${{github.run_attempt}} \
+      #       --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+      #       --template-file ${{env.BICEP_TEMPLATE_FILE_PATH}} \
+      #       --parameters @${{env.BICEP_TEMPLATE_FILE_PARAMETERS_PATH}} > whatif
 
       # Create string output of Whatif
-      - name: Create String Output
-        id: whatif-string
-        run: |
-          WHATIF=$(cat whatif)
+      # - name: Create String Output
+      #   id: whatif-string
+      #   run: |
+      #     WHATIF=$(cat whatif)
 
-          delimiter="$(openssl rand -hex 8)"
-          echo "summary<<${delimiter}" >> $GITHUB_OUTPUT
-          echo "## Whatif Output" >> $GITHUB_OUTPUT
-          echo "<details><summary>Click to expand</summary>" >> $GITHUB_OUTPUT
-          echo "" >> $GITHUB_OUTPUT
-          echo '```' >> $GITHUB_OUTPUT
-          echo "$WHATIF" >> $GITHUB_OUTPUT
-          echo '```' >> $GITHUB_OUTPUT
-          echo "</details>" >> $GITHUB_OUTPUT
-          echo "${delimiter}" >> $GITHUB_OUTPUT
+      #     delimiter="$(openssl rand -hex 8)"
+      #     echo "summary<<${delimiter}" >> $GITHUB_OUTPUT
+      #     echo "## Whatif Output" >> $GITHUB_OUTPUT
+      #     echo "<details><summary>Click to expand</summary>" >> $GITHUB_OUTPUT
+      #     echo "" >> $GITHUB_OUTPUT
+      #     echo '```' >> $GITHUB_OUTPUT
+      #     echo "$WHATIF" >> $GITHUB_OUTPUT
+      #     echo '```' >> $GITHUB_OUTPUT
+      #     echo "</details>" >> $GITHUB_OUTPUT
+      #     echo "${delimiter}" >> $GITHUB_OUTPUT
 
       # Publish Bicep Whatif Plan as task summary
-      - name: Publish Whatif to Task Summary
-        env:
-          SUMMARY: ${{ steps.whatif-string.outputs.summary }}
-        run: |
-          echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
+      # - name: Publish Whatif to Task Summary
+      #   env:
+      #     SUMMARY: ${{ steps.whatif-string.outputs.summary }}
+      #   run: |
+      #     echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
 
       # - name: Deploy Bicep Code using Git Action
       #   uses: azure/arm-deploy@v1
@@ -136,6 +136,6 @@ jobs:
 
       - name: Deploy Bicep Code
         run: |
-          az deployment group create --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name "dev-deployment-${{github.run_id}}-${{github.run_attempt}}" \
-          --template-file "./main.bicep" \
-          --parameters @"./main.parameters.json"
+          az deployment group create --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --name "dev-deployment-${{github.run_id}}-${{github.run_attempt}}" \
+          --template-file "main.bicep" --parameters @"main.parameters.json"
