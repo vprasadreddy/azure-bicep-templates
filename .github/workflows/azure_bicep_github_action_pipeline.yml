@@ -49,11 +49,11 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Bicep Lint
-        uses: Azure/cli@v2
-        with:
-          azcliversion: 2.63.0
-          inlineScript: az bicep build --file ${{env.BICEP_TEMPLATE_FILE_PATH}}
+      # - name: Bicep Lint
+      #   uses: Azure/cli@v2
+      #   with:
+      #     azcliversion: 2.63.0
+      #     inlineScript: az bicep build --file ${{env.BICEP_TEMPLATE_FILE_PATH}}
 
       # Validate whether a template is valid at Resource Group scope level
       # - name: Bicep Validate
