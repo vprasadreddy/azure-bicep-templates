@@ -81,7 +81,7 @@ stages:
               steps:
                 - checkout: self
 
-                # Deploy using template-file, JSON parameters file from parameters
+                # Deploy using template-file, parameters from JSON parameters file at Subscription Level
                 - task: AzureCLI@2
                   displayName: Deploy using template-file, JSON parameters file from parameters
                   condition: eq('${{ parameters.resource_to_deploy }}', 'Resource Group')
@@ -94,7 +94,7 @@ stages:
                       --template-file "$(System.DefaultWorkingDirectory)/${{parameters.bicepTemplateFilePath}}" \
                       --parameters @"$(System.DefaultWorkingDirectory)/${{parameters.bicepParametersFilePath}}" ${{variables.runSimulation}}
 
-                # Deploy using template-file, JSON parameters file from variables
+                # Deploy using template-file, parameters from JSON parameters file at Subscription Level
                 # - task: AzureCLI@2
                 #   displayName: Deploy using template-file, JSON parameters file from variables
                 #   condition: eq('${{ parameters.resource_to_deploy }}', 'Resource Group')
@@ -109,6 +109,7 @@ stages:
 
                 # Provision Windows or Linux Web App
                 # Make sure Resource Group is already created before provision Windows & Linux Web Apps
+                # Deploy using template-file, parameters from JSON parameters file at Resource Group Level
                 - task: AzureCLI@2
                   displayName: Provision Windows or Linux Web App
                   condition: or(eq('${{ parameters.resource_to_deploy }}', 'Linux Web App'), eq('${{ parameters.resource_to_deploy }}', 'Windows Web App'))
