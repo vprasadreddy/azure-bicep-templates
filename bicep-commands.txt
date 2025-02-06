@@ -1,7 +1,16 @@
+//References
+.bicepparam file - https://www.mattallford.com/2023/azure-bicep-parameter-files/
+https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/parameters
+
+
 az deployment sub create --location eastus --template-file resourcegroup.bicep --parameters @resourcegroup.parameters.json
+
+az deployment group create --resource-group "dev-rg" --name devrollout01 --template-file main.bicep --parameters @main.parameters.json
 
 az webapp list-runtimes --os-type linux
 
 az webapp list-runtimes --os-type windows
- 
-az deployment group create --resource-group "dev-rg" --name devrollout01 --template-file main.bicep --parameters @main.parameters.json
+
+
+// Output the storage account IDs
+output storageAccountIds array = [for config in storageAccountConfigs: storageAccounts[storageAccountConfigs.indexOf(config)].id]
